@@ -1,0 +1,119 @@
+<section class="h-100 gradient-form" style="background-color: #eee;">
+    <div class="container py-5 h-100 bg-light w-75" >
+        <div class="text-center">
+            <img src="./assets/Wemoov_logo.svg"
+                 style="width: 185px;" alt="logo">
+            <h3 style="color: #677dc6" class="mt-3 mb-3 pb-1">Inscription</h3>
+        </div>
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-md-8">
+                <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+                    <!-- Bloc Informations Personnelles -->
+                    <div class="mb-3">
+                        <h4 style="color: #ee5c4b">Informations Personnelles</h4>
+                        <div class="row mb-3">
+                            <div class="col form-outline">
+                                <label for="nom" class="form-label">Nom</label>
+                                <input type="text" [classList]="getCustomClassNom()" id="nom" placeholder="Nom"
+                                       pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" required formControlName="nom">
+                            </div>
+                            <div class="alert alert-danger shake-horizontal w-25"
+                                 *ngIf="nom && nom.invalid && (nom.dirty || nom.touched)">
+                                <div *ngIf="nom.errors && nom.errors['required']">Le nom de l'utilisateur est obligatoire.
+                                </div>
+                                <div *ngIf="nom.errors && nom.errors['pattern']">
+                                    Le nom de l'utilisateur doit contenir uniquement des lettres
+                                </div>
+                            </div>
+                            <div class="col form-outline">
+                                <label for="prenom" class="form-label">Prénom</label>
+                                <input type="text" [classList]="getCustomClassPrenom()" id="prenom" placeholder="Prénom"
+                                       pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" required autocomplete formControlName="prenom">
+                            </div>
+                            <div class="alert alert-danger shake-horizontal w-25"
+                                 *ngIf="prenom && prenom.invalid && (prenom.dirty || prenom.touched)">
+                                <div *ngIf="prenom.errors && prenom.errors['required']">Le Prénom de l'utilisateur est
+                                    obligatoire.
+                                </div>
+                                <div *ngIf="prenom.errors && prenom.errors['pattern']">
+                                    Le prénom de l'utilisateur doit contenir uniquement des lettres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dateNaissance" class="form-label">Date de Naissance</label>
+                            <input type="date" [classList]="getCustomClassDateNaissance()" id="dateNaissance" required
+                                   formControlName="dateNaissance">
+                        </div>
+                        <div class="alert alert-danger shake-horizontal"
+                             *ngIf="dateNaissance && dateNaissance.invalid && (dateNaissance.dirty || dateNaissance.touched)">
+                            <div *ngIf="dateNaissance.errors && dateNaissance.errors['required']">La Date de naissance de
+                                l'utilisateur est obligatoire.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bloc Identifiants de Connexion -->
+                    <div class="mb-3">
+                        <h4 style="color: #ee5c4b">Identifiants de Connexion</h4>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nom d'utilisateur (email ou numéro de
+                                téléphone)</label>
+                            <input type="text" [classList]="getCustomClassUsername()" id="username"
+                                   placeholder="Nom d'utilisateur"
+                                   pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$|^0[1-9]([-. ]?[0-9]{2}){4}$"
+                                   required formControlName="username">
+                        </div>
+                        <div class="alert alert-danger shake-horizontal"
+                             *ngIf="username && username.invalid && (username.dirty || username.touched)">
+                            <div *ngIf="username.errors && username.errors['required']">Le nom d'utilisateur est
+                                obligatoire.
+                            </div>
+                            <div *ngIf="username.errors && username.errors['pattern']">
+                                Le nom d'utilisateur doit être une adresse mail ou un numéro de téléphone valide
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mot de passe (12 caractères, avec une majuscule et un
+                                chiffre)</label>
+                            <input type="password" [classList]="getCustomClassPassword()" id="password"
+                                   placeholder="Mot de passe"
+                                   pattern="(?=.*\d)(?=.*[A-Z]).{12,}" required formControlName="password" autocomplete="">
+                        </div>
+                        <div class="alert alert-danger shake-horizontal"
+                             *ngIf=" password && password.invalid && (password.dirty || password.touched)">
+                            <div *ngIf="password.errors && password.errors['required']">Le mot de passe est obligatoire.
+                            </div>
+                            <div *ngIf="password.errors && password.errors['pattern']">
+                                Le mot de passe doit contenir 12 caractères et une lettre majuscule et un chiffre.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
+                            <input type="password" [classList]="getCustomClassConfirmPassword()" id="confirmPassword"
+                                   placeholder="Confirmer le mot de passe" pattern="(?=.*\d)(?=.*[A-Z]).{12,}" required
+                                   formControlName="confirmPassword" autocomplete="">
+                        </div>
+                        <div class="alert alert-danger shake-horizontal"
+                             *ngIf=" confirmPassword && confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)">
+                            <div *ngIf="confirmPassword.errors && confirmPassword.errors['required']">La confirmation du mot
+                                de passe est obligatoire.
+                            </div>
+                            <div *ngIf="confirmPassword.errors && confirmPassword.errors['pattern']">
+                                Le mot de passe doit contenir 12 caractères et une lettre majuscule et un chiffre.
+                            </div>
+                            <div *ngIf="confirmPassword.errors && confirmPassword.errors['matchValue']">
+                                Les mots de passe ne correspondent pas.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block fa-lg wemoov-primary rotate-center m-1" [disabled]="registerForm.invalid">
+                        S'inscrire
+                    </button>
+                    <button type="submit" class="btn btn-outline-danger m-1" (click)="navigateToLoginPage()">Se connecter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

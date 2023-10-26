@@ -1,0 +1,96 @@
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="#!"> <img src="./assets/Wemoov_logo.svg"
+                                                style="width: 185px;" alt="logo"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="#!">A propos</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">Billetterie</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#!">Tous les évenements</a></li>
+                        <li>
+                            <hr class="dropdown-divider"/>
+                        </li>
+                        <li><a class="dropdown-item" href="#!">Événements sportifs</a></li>
+                        <li><a class="dropdown-item" href="#!">Événements musicaux</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown2" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">Mon Compte</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Mon profil</a></li>
+                        <li>
+                            <hr class="dropdown-divider"/>
+                        </li>
+                        <li><a class="dropdown-item" href="/login">Déconnexion</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <button class="btn btn-outline-dark" type="submit">
+                    <i class="bi-cart-fill me-1"></i>
+                    Mon panier
+                    <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-6 fw-bolder">Votre accès privilégié à la culture, sans files d'attente numériques !</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Notre système performant gère facilement les afflux massifs d'utilisateurs, pour une réservation toujours réussie</p>
+        </div>
+    </div>
+</header>
+<!-- Section-->
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <div class="col mb-5" *ngFor="let event of listEvent">
+                <div class="card h-100">
+                    <div class="badge bg-danger text-white text-uppercase position-absolute" style="top: 0.5rem; right: 0.5rem">Rupture</div>
+                    <div class="badge bg-success text-white text-uppercase position-absolute" style="top: 0.5rem; right: 0.5rem">Dispo</div>
+                    <div class="badge bg-warning text-white text-uppercase position-absolute" style="top: 0.5rem; right: 0.5rem">Bientôt épuisé</div>
+                    <!-- Product image-->
+                    <img class="card-img-top" style="height: 200px" src="https://leclaireur.fnac.com/wp-content/uploads/2022/10/admin-agenda-action-600.jpg" alt="..."/>
+                    <!-- Product details-->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder">{{event['name']}}</h5>
+                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-fill"></div>
+                                <div class="bi-star-half"></div>
+                            </div>
+                            <p><em>Le <strong>{{event['startDate'] | date: 'dd MMMM yyyy'}}</strong> à <strong>{{event['startDate'] | date: 'HH:mm'}}</strong> {{event['address']}}</em></p>
+                            <!-- Product price-->
+                            {{event['capacity'] / 100}}€
+                        </div>
+                    </div>
+                    <!-- Product actions-->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Acheter</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Footer-->
+<footer class="py-5 bg-dark">
+    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Wemoov 2023</p></div>
+</footer>

@@ -1,0 +1,90 @@
+<section class="h-100 gradient-form" style="background-color: #eee;">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-xl-10">
+                <div class="card rounded-3 text-black">
+                    <div class="row g-0">
+                        <div class="col-lg-6">
+                            <div class="card-body p-md-5 mx-md-4">
+
+                                <div class="text-center">
+                                    <img src="./assets/Wemoov_logo.svg"
+                                         style="width: 185px;" alt="logo">
+                                    <h4 class="mt-2 mb-5 pb-1" style="color: #677dc6">Connexion</h4>
+                                </div>
+
+                                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+                                    <div class="form-outline mb-4 ">
+                                        <label class="form-label" for="usernameInput">Nom d'utilisateur</label>
+                                        <input type="text" id="usernameInput" [classList]="getCustomClassUsername()"
+                                               required
+                                               pattern="^0\d{9}$|^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$"
+                                               placeholder="Entrez votre email ou votre numéro de téléphone"
+                                               formControlName="username"/>
+                                    </div>
+                                    <div class="alert alert-danger shake-horizontal" *ngIf="username && username.invalid && (username.dirty || username.touched)">
+                                        <div *ngIf="username.errors && username.errors['required']">Le nom d'utilisateur est obligatoire.</div>
+                                        <div *ngIf="username.errors && username.errors['pattern']">
+                                            Le nom d'utilisateur doit être une adresse mail ou un numéro de téléphone valide
+                                        </div>
+                                    </div>
+                                    <div class="form-outline mb-4 ">
+                                        <label class="form-label" for="passwordInput">Mot de passe</label>
+                                        <input type="password" id="passwordInput" [classList]="getCustomClassPassword()"
+                                               placeholder="Votre mot de passe"
+                                               autocomplete
+                                               required
+                                               pattern="^(?=.*[A-Z])(?=.*\d).{12,}$"
+                                               formControlName="password"/>
+                                    </div>
+                                    <div class="alert alert-danger shake-horizontal" *ngIf=" password && password.invalid && (password.dirty || password.touched)">
+                                        <div *ngIf="password.errors && password.errors['required']">Le mot de passe est obligatoire.</div>
+                                        <div *ngIf="password.errors && password.errors['pattern']">
+                                            Le mot de passe doit contenir  12 caractères et une lettre majuscule et un chiffre.
+                                        </div>
+                                    </div>
+
+
+                                    <div class="text-center pt-1 mb-5 pb-1">
+                                        <button class="btn btn-primary btn-block fa-lg wemoov-primary mb-3 rotate-center"
+                                                [disabled]="loginForm.invalid"
+                                                type="submit">Connexion
+                                        </button>
+                                    </div>
+                                    <div *ngIf="!isSuccessLogin && msgError.length > 0" class="alert alert-danger">
+                                        <span>{{msgError}}</span>
+                                    </div>
+
+                                    <div class="d-flex align-items-center justify-content-center pb-4">
+                                        <p class="mb-0 me-2">Vous n'avez pas encore d'accès ?</p>
+                                        <button type="button" class="btn btn-outline-danger" (click)="navigateToRegisterPage()">Créer un compte</button>
+                                    </div>
+
+                                </form>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-6 align-items-center image-background d-none d-lg-flex">
+                            <div class="text-black px-3 py-4 p-md-5 mx-md-4 scale-up-center rounded-3" style="background-color: rgba(255,255,255,.75)">
+                                <h4 class="mb-4">L'homme au coeur du projet d'entreprise !</h4>
+                                <p class="small mb-0">Co-fondée en 2017 par 3 passionnés de l’informatique, Wemoov est
+                                    une jeune Startup, ESN SSII dynamique.
+
+                                    Travaillant ensemble depuis plus de 20 ans, nous souhaitions retrouver de vraies
+                                    valeurs telles que le respect, l’honnêteté et la proximité, et cela dans une société
+                                    à taille humaine,
+
+                                    Uniquement des hommes et des femmes qui ont envie de prendre du plaisir au travail
+                                    avec un sentiment d’appartenance.
+
+                                    Notre ADN, une relation tripartite saine et agréable orientée satisfaction pour tous
+                                    : Clients, Collaborateurs, Wemoov.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
