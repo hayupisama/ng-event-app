@@ -2,6 +2,9 @@ import {Component} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
 import {NotificationService} from "../../notification/notification.service";
 import {Router} from "@angular/router";
+import {RegisterService} from "../register.service";
+import {first} from "rxjs";
+import {HttpClientService} from "../../http-client.service";
 
 @Component({
     selector: 'app-register',
@@ -11,11 +14,17 @@ import {Router} from "@angular/router";
 export class RegisterComponent {
     registerForm: FormGroup;
 
-    constructor(private fb: FormBuilder, private notificationService: NotificationService, private router: Router) {
+    constructor(
+        private fb: FormBuilder,
+        private notificationService: NotificationService,
+        private router: Router,
+        private registerService: RegisterService,
+        private http: HttpClientService) {
         this.registerForm = this.fb.group({
             nom: ['', [Validators.required, Validators.pattern(/[A-Za-zÀ-ÖØ-öø-ÿ\s]+/)]],
             prenom: ['', [Validators.required, Validators.pattern(/[A-Za-zÀ-ÖØ-öø-ÿ\s]+/)]],
             dateNaissance: ['', [Validators.required]],
+            gender: ['', [Validators.required]],
             username: ['', [Validators.required, Validators.pattern(/^0\d{9}$|^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/)]],
             password: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Z])(?=.*\d).{12,}$/)]],
             confirmPassword: ['', [Validators.required, this.matchValue('password')]]
@@ -47,14 +56,36 @@ export class RegisterComponent {
         return this.registerForm.get('confirmPassword');
     }
 
+
+    get gender() {
+        return this.registerForm.get('gender');
+    }
+
     onSubmit() {
         if (this.registerForm.valid) {
-            this.notificationService.toggleNotification(true);
-            this.notificationService.changeMessage('Inscription réussi, redirection dans 3 secondes....', 'success');
-            console.log('Form submitted successfully! ');
-            setTimeout(() => {
-                this.navigateToLoginPage();
-            }, 3000); // redirect after 3000ms (3 seconds)
+            this.registerService.register(
+                this.registerForm.controls['username'].value,
+                this.registerForm.controls['password'].value,
+                this.registerForm.controls['username'].value.toString().startsWith('0')
+                    ? 'noMail@gmail.com'
+                    : this.registerForm.controls['username'].value,
+                `${(this.registerForm.controls['nom'].value).toUpperCase()} ${this.registerForm.controls['prenom'].value}`,
+                this.registerForm.controls['gender'].value,
+                this.registerForm.controls['dateNaissance'].value,
+                'FR'
+            ).pipe(first())
+                .subscribe({
+                    next: (response) => {
+                        console.log(response.data);
+                        this.notificationService.toggleNotification(true);
+                        this.notificationService.changeMessage('Inscription réussi, redirection...', 'success');
+                        this.router.navigate(['/login']);
+                    },
+                    error: err => {
+                        this.notificationService.toggleNotification(true);
+                        this.notificationService.changeMessage(`Inscription à échouée ${this.http.handleHttpError(err)}`, 'danger');
+                    }
+                });
 
         }
     }

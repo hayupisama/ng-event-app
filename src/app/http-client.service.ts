@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {BehaviorSubject, finalize, Observable} from "rxjs";
+import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
+import {BehaviorSubject, finalize, first, Observable, ReplaySubject} from "rxjs";
 import {Router} from "@angular/router";
 
 @Injectable({
@@ -14,7 +14,7 @@ export class HttpClientService {
     constructor(private http: HttpClient) {
     }
 
-    get(url: string, httpOptions?:any): Observable<any> {
+    get(url: string, httpOptions?: any): Observable<any> {
         this.loadingSubject.next(true);
         return this.http.get(`${this.apiUrl}${url}`, httpOptions).pipe(
             finalize(() => this.loadingSubject.next(false))
@@ -28,6 +28,19 @@ export class HttpClientService {
         );
     }
 
+    validate(token: string) {
+        this.loadingSubject.next(true);
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Authorization': `Bearer ${token}`
+            })
+        };
+        return this.http.get(`${this.apiUrl}/users/validate`, httpOptions)
+            .pipe(
+                finalize(() => this.loadingSubject.next(false))
+            );
+    }
+
     isLoading(): Observable<boolean> {
         return this.loadingSubject.asObservable();
     }
@@ -39,7 +52,7 @@ export class HttpClientService {
             case 401:
                 return 'Non Autorisé : L\'authentification a échoué ou l\'utilisateur n\'a pas les permissions nécessaires.';
             case 403:
-                return 'Interdit : Le serveur comprend la requête, mais refuse de l\'exécuter.';
+                return 'Interdit : Identifiant incorrect';
             case 404:
                 return 'Non Trouvé : La ressource demandée n\'a pas pu être trouvée sur le serveur.';
             case 500:

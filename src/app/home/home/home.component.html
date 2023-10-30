@@ -49,36 +49,49 @@
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
             <h1 class="display-6 fw-bolder">Votre accès privilégié à la culture, sans files d'attente numériques !</h1>
-            <p class="lead fw-normal text-white-50 mb-0">Notre système performant gère facilement les afflux massifs d'utilisateurs, pour une réservation toujours réussie</p>
+            <p class="lead fw-normal text-white-50 mb-0">Notre système performant gère facilement les afflux massifs
+                d'utilisateurs, pour une réservation toujours réussie</p>
         </div>
     </div>
 </header>
 <!-- Section-->
 <section class="py-5">
     <div class="container px-4 px-lg-5 mt-5">
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+        <div *ngIf="listEvent.length !== 0"
+             class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <div class="col mb-5" *ngFor="let event of listEvent">
                 <div class="card h-100">
-                    <div class="badge bg-danger text-white text-uppercase position-absolute" style="top: 0.5rem; right: 0.5rem">Rupture</div>
-                    <div class="badge bg-success text-white text-uppercase position-absolute" style="top: 0.5rem; right: 0.5rem">Dispo</div>
-                    <div class="badge bg-warning text-white text-uppercase position-absolute" style="top: 0.5rem; right: 0.5rem">Bientôt épuisé</div>
+                    <div class="badge bg-primary text-white text-uppercase position-absolute"
+                         style="top: 0.5rem; right: 0.5rem">{{getAvailabilityTag(event)}}</div>
+                    <div *ngIf="isEventEndingSoon(event)"
+                         class="badge bg-warning text-white text-uppercase position-absolute"
+                         style="top: 0.5rem; left: 0.5rem">Se termine bientot
+                    </div>
+                    <div *ngIf="event.inSold" class="badge bg-danger text-white text-uppercase position-absolute"
+                         style="top: 10.5rem; left: 0.5rem">PROMO
+                    </div>
                     <!-- Product image-->
-                    <img class="card-img-top" style="height: 200px" src="https://leclaireur.fnac.com/wp-content/uploads/2022/10/admin-agenda-action-600.jpg" alt="..."/>
+                    <img class="card-img-top" style="height: 200px" [src]="event.image" alt="..."/>
                     <!-- Product details-->
                     <div class="card-body p-4">
                         <div class="text-center">
                             <!-- Product name-->
-                            <h5 class="fw-bolder">{{event['name']}}</h5>
+                            <h6 class="fw-bolder">{{event.name}}</h6>
+                            <footer class="blockquote-footer m-1">Par {{event.organizer}} <cite
+                                    title="Source Title">{{event.description}}</cite></footer>
+
                             <div class="d-flex justify-content-center small text-warning mb-2">
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-half"></div>
+                                <ng-container *ngFor="let star of getStarArray(event)">
+                                    <div [class]="star"></div>
+                                </ng-container>
+                                <div class="bi-star"></div>
                             </div>
-                            <p><em>Le <strong>{{event['startDate'] | date: 'dd MMMM yyyy'}}</strong> à <strong>{{event['startDate'] | date: 'HH:mm'}}</strong> {{event['address']}}</em></p>
-                            <!-- Product price-->
-                            {{event['capacity'] / 100}}€
+                            <p><em>Le <strong>{{event.startDate | date: 'dd MMMM yyyy'}}</strong> à
+                                <strong>{{event.startDate | date: 'HH:mm'}}</strong> {{event.address}}</em></p>
+                            <h5><span *ngIf="event.inSold"
+                                  class="text-muted text-decoration-line-through">{{event.price}}€</span></h5>
+                            <h3><span class="badge bg-success">{{event.soldPrice}}€</span></h3>
+
                         </div>
                     </div>
                     <!-- Product actions-->
@@ -88,6 +101,7 @@
                 </div>
             </div>
         </div>
+        <h1 class="display-3" *ngIf="listEvent.length===0">Oups... Il n'y a aucun événements pour l'instant.</h1>
     </div>
 </section>
 <!-- Footer-->
