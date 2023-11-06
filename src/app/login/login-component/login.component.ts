@@ -6,6 +6,7 @@ import {LoginService} from "../login.service";
 import {catchError, first, tap} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
 import {HttpClientService} from "../../http-client.service";
+import UserDTO from "../../../models/UserDTO";
 
 @Component({
     selector: 'app-login-component',
@@ -14,9 +15,8 @@ import {HttpClientService} from "../../http-client.service";
 })
 export class LoginComponent {
     loginForm: FormGroup;
-    isSuccessLogin = false;
-    user: any = undefined;
     msgError: string = "";
+    isSuccessLogin = false;
 
     constructor(private fb: FormBuilder,
                 private notificationService: NotificationService,
@@ -46,10 +46,11 @@ export class LoginComponent {
             this.loginService.login(username, password).pipe(first())
                 .subscribe({
                     next: (response) => {
-                        this.user = response.data;
-                        this.notificationService.toggleNotification(true);
-                        this.notificationService.changeMessage(`Bienvenu ${this.user.fullName}`, 'success');
+                        this.loginService.setUserInfo = response.data;
                         this.isSuccessLogin = true;
+
+                        this.notificationService.toggleNotification(true);
+                        this.notificationService.changeMessage(`Bienvenu ${(this.loginService.getUserInfo as UserDTO).fullName}`, 'success');
                         const token = response.data.access_token;
                         localStorage.setItem("jwtToken", token);
                         this.router.navigate(['/home']);

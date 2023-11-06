@@ -1,6 +1,7 @@
 import Gender from "../utils/Gender";
 
 class UserDTO {
+    id : number;
     username: string;
     password: string;
     email: string;
@@ -9,7 +10,8 @@ class UserDTO {
     birthdate: string;
     country: string;
 
-    constructor(username: string, password: string, email: string, fullName: string, gender: Gender, birthdate: string, country: string) {
+    constructor(id:number, username: string, password: string, email: string, fullName: string, gender: Gender, birthdate: string, country: string) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;

@@ -34,13 +34,6 @@
                     </ul>
                 </li>
             </ul>
-            <form class="d-flex">
-                <button class="btn btn-outline-dark" type="submit">
-                    <i class="bi-cart-fill me-1"></i>
-                    Mon panier
-                    <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
-                </button>
-            </form>
         </div>
     </div>
 </nav>
@@ -61,8 +54,11 @@
              class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <div class="col mb-5" *ngFor="let event of listEvent">
                 <div class="card h-100">
-                    <div class="badge bg-primary text-white text-uppercase position-absolute"
-                         style="top: 0.5rem; right: 0.5rem">{{getAvailabilityTag(event)}}</div>
+                    <button class="btn btn-sm text-white text-uppercase position-absolute"
+                            data-bs-toggle="tooltip" data-bs-placement="top"
+                            [title]="'Restant : '+event.remainingCapacity"
+                            style="top: 0.5rem; right: 0.5rem;"
+                            [ngClass]="event.remainingCapacity === 0 ? 'btn-danger' : event.remainingCapacity <= Math.floor(event.capacity * 0.25) ? 'btn-warning' : 'btn-primary'">{{getAvailabilityTag(event)}}</button>
                     <div *ngIf="isEventEndingSoon(event)"
                          class="badge bg-warning text-white text-uppercase position-absolute"
                          style="top: 0.5rem; left: 0.5rem">Se termine bientot
@@ -86,17 +82,29 @@
                                 </ng-container>
                                 <div class="bi-star"></div>
                             </div>
-                            <p><em>Le <strong>{{event.startDate | date: 'dd MMMM yyyy'}}</strong> à
-                                <strong>{{event.startDate | date: 'HH:mm'}}</strong> {{event.address}}</em></p>
+                            <p *ngIf="(event.startDate | date: 'dd-MM-yyyy') === (event.endDate | date: 'dd-MM-yyyy')">
+                                <em><strong> Le {{event.startDate | date: 'dd MMMM yyyy'}}</strong>
+                                    à <strong>{{event.startDate | date: 'HH:mm'}}</strong> <br> {{event.address}}</em>
+                            </p>
+                            <p *ngIf="(event.startDate | date: 'dd/MM/yyyy') !== (event.endDate | date: 'dd/MM/yyyy')">
+                                <em><strong>Du {{event.startDate | date: 'dd MMMM yyyy'}}</strong>
+                                    <strong> au {{event.endDate | date: 'dd MMMM yyyy'}}</strong>
+                                    à <strong>{{event.startDate | date: 'HH:mm'}}</strong> <br> {{event.address}}</em>
+                            </p>
                             <h5><span *ngIf="event.inSold"
-                                  class="text-muted text-decoration-line-through">{{event.price}}€</span></h5>
+                                      class="text-muted text-decoration-line-through">{{event.price}}€</span></h5>
                             <h3><span class="badge bg-success">{{event.soldPrice}}€</span></h3>
 
                         </div>
                     </div>
                     <!-- Product actions-->
                     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Acheter</a></div>
+                        <div class="text-center">
+                            <button class="btn btn-outline-dark mt-auto" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#reservationModal"
+                                    (click)="selectEventForReservation(event)">Acheter
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -108,3 +116,65 @@
 <footer class="py-5 bg-dark">
     <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Wemoov 2023</p></div>
 </footer>
+<!-- Modal pour la réservation -->
+<div class="modal fade" id="reservationModal" role="dialog" tabindex="-1" aria-labelledby="reservationModelLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reservationModelLabel">Réservation {{selectedEvent?.name}}</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="cancelEventForReservation()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="reservationForm">
+                    <div class="mb-3">
+                        <label for="reservationDate" class="form-label">Date de la réservation</label>
+                        <input type="date" [min]="(selectedEvent?.startDate | date: 'yyyy-MM-dd')"
+                               [max]="(selectedEvent?.endDate | date: 'yyyy-MM-dd')" class="form-control"
+                               id="reservationDate" formControlName="reservationDate">
+                        <div class="alert alert-danger"
+                             *ngIf="reservationDate && reservationDate.invalid && (reservationDate && reservationDate.dirty || reservationDate && reservationDate.touched)">
+                            <div *ngIf="reservationDate && reservationDate.errors && reservationDate.errors['required']">
+                                La date de réservation
+                                est obligatoire.
+                            </div>
+                            <div class="alert alert-danger"
+                                 *ngIf="reservationDate && reservationDate.errors && reservationDate.errors['dateInvalid']">
+                                La date de
+                                réservation doit être entre la date de début et de fin de l'événement.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="numberOfPeople" class="form-label">Nombre de personnes</label>
+                        <input type="number" class="form-control" id="numberOfPeople" formControlName="numberOfPeople"
+                               min="1">
+                        <div class="alert alert-danger"
+                             *ngIf="numberOfPeople && numberOfPeople.invalid && (numberOfPeople.dirty || numberOfPeople.touched)">
+                            <div *ngIf="numberOfPeople && numberOfPeople.errors && numberOfPeople.errors['required']">Le
+                                nombre de personnes
+                                est obligatoire.
+                            </div>
+                            <div class="alert alert-danger"
+                                 *ngIf="numberOfPeople && numberOfPeople.errors && numberOfPeople.errors['min']">Le
+                                nombre de personnes doit
+                                être supérieur à 0.
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        (click)="cancelEventForReservation()">Annuler
+                </button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="createReservation()">
+                    Confirmer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
